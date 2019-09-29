@@ -46,18 +46,14 @@ class App extends React.Component {
     let payload = {};
     this.state.formFieldsArr.forEach(e => (payload[e.name] = e.value));
     this.callApi(payload);
-    // console.log(payload);
   }
 
   async callApi({ state, suburb, postcode }) {
     this.setState({ isLoading: true });
     let url = `https://digitalapi.auspost.com.au/postcode/search.json?q=${suburb}&state=${state}`;
-
     try {
       let resp = await fetch(url, {
-        headers: {
-          "auth-key": "872608e3-4530-4c6a-a369-052accb03ca8"
-        }
+        headers: { "auth-key": "872608e3-4530-4c6a-a369-052accb03ca8" }
       });
       let data = await resp.json();
       this.afterApiSuccess(data, { state, suburb, postcode });
@@ -70,12 +66,7 @@ class App extends React.Component {
 
   afterApiSuccess({ localities }, { state, suburb, postcode }) {
     if (localities && localities.locality)
-      return this.checkPostcodeValidity(
-        localities.locality,
-        state,
-        suburb,
-        postcode
-      );
+      return this.checkPostcodeValidity(localities.locality, suburb, postcode);
     this.setupAlertMessage({
       show: true,
       type: "error",
@@ -83,7 +74,7 @@ class App extends React.Component {
     });
   }
 
-  checkPostcodeValidity(locality, state, suburb, postcode) {
+  checkPostcodeValidity(locality, suburb, postcode) {
     let isValid = this.checkPostcode(locality, postcode);
     isValid
       ? this.setupAlertMessage({
@@ -100,6 +91,7 @@ class App extends React.Component {
 
   checkPostcode(locality, postcode) {
     //1. check if locality is an object or array
+    //2. check if it contains the right postcode
     if (Array.isArray(locality)) {
       return locality.some(e => e.postcode === postcode);
     }
@@ -116,12 +108,13 @@ class App extends React.Component {
   }
 
   render() {
+    const showAlert = this.state.alert.show ? (
+      <AlertMessage {...this.state.alert} close={this.setupAlertMessage} />
+    ) : null;
     return (
       <div className="App">
         <h1>Hello LawPath</h1>
-        {this.state.alert.show ? (
-          <AlertMessage {...this.state.alert} close={this.setupAlertMessage} />
-        ) : null}
+        {showAlert}
         <form className="lawpath__form" onSubmit={this.handleFormSubmit}>
           {this.state.formFieldsArr.map(({ elementType, ...props }) =>
             elementType === "input" ? (

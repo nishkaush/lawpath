@@ -1,5 +1,6 @@
 import React from "react";
 import "./Dropdown.css";
+import PropTypes from "prop-types";
 
 const Dropdown = props => {
   return (
@@ -20,6 +21,18 @@ const Dropdown = props => {
       </select>
     </div>
   );
+};
+
+Dropdown.propTypes = {
+  name: PropTypes.string.isRequired,
+  id: PropTypes.number.isRequired,
+  optionsArr: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      label: PropTypes.string.isRequired
+    })
+  ).isRequired,
+  change: PropTypes.func.isRequired
 };
 
 export default Dropdown;

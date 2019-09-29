@@ -1,5 +1,6 @@
 import React from "react";
 import "./Input.css";
+import PropTypes from "prop-types";
 
 const Input = ({ change, ...props }) => {
   return (
@@ -11,9 +12,13 @@ const Input = ({ change, ...props }) => {
         {...props}
         onChange={e => change(props.id, e)}
       />
-      <small style={{ display: "none" }}>Helper text here</small>
     </div>
   );
 };
 
+Input.proptype = {
+  change: PropTypes.func,
+  name: PropTypes.string,
+  id: PropTypes.number
+};
 export default Input;
