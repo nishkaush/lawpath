@@ -56,8 +56,8 @@ class App extends React.Component {
         headers: { "auth-key": "872608e3-4530-4c6a-a369-052accb03ca8" }
       });
       let data = await resp.json();
-      this.afterApiSuccess(data, { state, suburb, postcode });
       this.setState({ isLoading: false });
+      return this.afterApiSuccess(data, { state, suburb, postcode });
     } catch (error) {
       this.setState({ isLoading: false });
       this.afterApiFail(error);
@@ -80,7 +80,7 @@ class App extends React.Component {
       ? this.setupAlertMessage({
           show: true,
           type: "success",
-          body: `"The postcode, suburb and state entered are valid!"`
+          body: `The postcode, suburb and state entered are valid!`
         })
       : this.setupAlertMessage({
           show: true,

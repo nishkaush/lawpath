@@ -3,7 +3,7 @@ export default [
     id: 1,
     name: "postcode",
     value: "",
-    placeholder: "Type Postcode (required)",
+    placeholder: "Type numbers only (required)",
     type: "number",
     elementType: "input"
   },
