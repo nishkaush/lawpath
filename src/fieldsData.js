@@ -29,7 +29,8 @@ export default [
       { id: 4, label: "WA" },
       { id: 5, label: "NT" },
       { id: 6, label: "TAS" },
-      { id: 7, label: "SA" }
+      { id: 7, label: "SA" },
+      { id: 8, label: "ACT" }
     ]
   }
 ];
