@@ -11,7 +11,7 @@ const Dropdown = props => {
         id={props.name}
         onChange={e => props.change(props.id, e)}
       >
-        <option value="">Select state</option>
+        <option value="">Choose State (required)</option>
         {props.optionsArr.map(({ id, label }) => (
           <option key={id} value={label}>
             {label}

@@ -3,7 +3,7 @@ export default [
     id: 1,
     name: "postcode",
     value: "",
-    placeholder: "Type Postcode",
+    placeholder: "Type Postcode (required)",
     type: "number",
     elementType: "input"
   },
@@ -11,7 +11,7 @@ export default [
     id: 2,
     name: "suburb",
     value: "",
-    placeholder: "Type Suburb Name",
+    placeholder: "Type Suburb Name (required)",
     type: "text",
     elementType: "input"
   },
@@ -19,7 +19,7 @@ export default [
     id: 3,
     name: "state",
     value: "",
-    placeholder: "Choose State",
+    placeholder: "Choose State (required)",
     type: "text",
     elementType: "select",
     optionsArr: [

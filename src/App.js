@@ -3,15 +3,25 @@ import "./App.css";
 import Input from "./components/Input/Input";
 import Dropdown from "./components/Dropdown/Dropdown";
 import formFieldsArr from "./fieldsData";
+import AlertMessage from "./components/AlertMessage/AlertMessage";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { formFieldsArr };
+    this.state = {
+      formFieldsArr,
+      isLoading: false,
+      alert: { show: false, type: "", body: "" }
+    };
 
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.setupAlertMessage = this.setupAlertMessage.bind(this);
+  }
+
+  setupAlertMessage(payload) {
+    this.setState({ alert: payload });
   }
 
   handleInputChange(id, event) {
@@ -26,12 +36,92 @@ class App extends React.Component {
 
   handleFormSubmit(event) {
     event.preventDefault();
-    console.log(this.state.formFieldsArr);
+    let isFormValid = this.state.formFieldsArr.every(e => e.value);
+    if (!isFormValid)
+      return this.setupAlertMessage({
+        show: true,
+        type: "error",
+        body: "Provide values for all fields"
+      });
+    let payload = {};
+    this.state.formFieldsArr.forEach(e => (payload[e.name] = e.value));
+    this.callApi(payload);
+    // console.log(payload);
   }
+
+  async callApi({ state, suburb, postcode }) {
+    this.setState({ isLoading: true });
+    let url = `https://digitalapi.auspost.com.au/postcode/search.json?q=${suburb}&state=${state}`;
+
+    try {
+      let resp = await fetch(url, {
+        headers: {
+          "auth-key": "872608e3-4530-4c6a-a369-052accb03ca8"
+        }
+      });
+      let data = await resp.json();
+      this.afterApiSuccess(data, { state, suburb, postcode });
+      this.setState({ isLoading: false });
+    } catch (error) {
+      this.setState({ isLoading: false });
+      this.afterApiFail(error);
+    }
+  }
+
+  afterApiSuccess({ localities }, { state, suburb, postcode }) {
+    if (localities && localities.locality)
+      return this.checkPostcodeValidity(
+        localities.locality,
+        state,
+        suburb,
+        postcode
+      );
+    this.setupAlertMessage({
+      show: true,
+      type: "error",
+      body: `The suburb ${suburb} does not exist in the state ${state}`
+    });
+  }
+
+  checkPostcodeValidity(locality, state, suburb, postcode) {
+    let isValid = this.checkPostcode(locality, postcode);
+    isValid
+      ? this.setupAlertMessage({
+          show: true,
+          type: "success",
+          body: `"The postcode, suburb and state entered are valid!"`
+        })
+      : this.setupAlertMessage({
+          show: true,
+          type: "error",
+          body: `The postcode ${postcode} does not match the suburb ${suburb}"`
+        });
+  }
+
+  checkPostcode(locality, postcode) {
+    //1. check if locality is an object or array
+    if (Array.isArray(locality)) {
+      return locality.some(e => e.postcode === postcode);
+    }
+    return locality.postcode === postcode;
+  }
+
+  afterApiFail(err) {
+    console.log("error", err);
+    this.setupAlertMessage({
+      show: true,
+      type: "error",
+      body: `Couldn't validate your data. Please check your internet connection and try again later`
+    });
+  }
+
   render() {
     return (
       <div className="App">
         <h1>Hello LawPath</h1>
+        {this.state.alert.show ? (
+          <AlertMessage {...this.state.alert} close={this.setupAlertMessage} />
+        ) : null}
         <form className="lawpath__form" onSubmit={this.handleFormSubmit}>
           {this.state.formFieldsArr.map(({ elementType, ...props }) =>
             elementType === "input" ? (
@@ -48,7 +138,9 @@ class App extends React.Component {
               />
             )
           )}
-          <button>Submit</button>
+          <button disabled={this.state.isLoading}>
+            {this.state.isLoading ? "Loading..." : "Submit"}
+          </button>
         </form>
       </div>
     );
