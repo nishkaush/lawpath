@@ -11,21 +11,6 @@
   margin: 2% auto;
 }
 
-.lawpath__form input {
-  border: 1px solid white;
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-  margin: 10px;
-  padding-left: 2%;
-  border-radius: 10px;
-  font-size: 0.9em;
-}
-
-.lawpath__form input:focus {
-  outline: none;
-
-}
-
 .lawpath__form button {
   background: #191919;
   color: white;
@@ -55,6 +40,6 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-/* input:focus::placeholder {
+input:focus::placeholder {
   opacity: 0;
-} */
+}

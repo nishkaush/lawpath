@@ -1,35 +1,14 @@
 import React from "react";
 import "./App.css";
+import Input from "./components/Input/Input";
+import Dropdown from "./components/Dropdown/Dropdown";
+import formFieldsArr from "./fieldsData";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      formFieldsArr: [
-        {
-          id: 1,
-          name: "postcode",
-          value: "",
-          placeholder: "Postcode",
-          type: "number"
-        },
-        {
-          id: 2,
-          name: "suburb",
-          value: "",
-          placeholder: "Suburb",
-          type: "text"
-        },
-        {
-          id: 3,
-          name: "state",
-          value: "",
-          placeholder: "State",
-          type: "text"
-        }
-      ]
-    };
+    this.state = { formFieldsArr };
 
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -47,25 +26,28 @@ class App extends React.Component {
 
   handleFormSubmit(event) {
     event.preventDefault();
-    // let payload = this.state.formFieldsArr.
     console.log(this.state.formFieldsArr);
   }
   render() {
     return (
       <div className="App">
         <h1>Hello LawPath</h1>
-        <form
-          className="lawpath__form"
-          action=""
-          onSubmit={this.handleFormSubmit}
-        >
-          {this.state.formFieldsArr.map(({ id, ...props }) => (
-            <input
-              key={id}
-              {...props}
-              onChange={this.handleInputChange.bind(this, id)}
-            />
-          ))}
+        <form className="lawpath__form" onSubmit={this.handleFormSubmit}>
+          {this.state.formFieldsArr.map(({ elementType, ...props }) =>
+            elementType === "input" ? (
+              <Input
+                key={props.id}
+                {...props}
+                change={this.handleInputChange}
+              />
+            ) : (
+              <Dropdown
+                key={props.id}
+                {...props}
+                change={this.handleInputChange}
+              />
+            )
+          )}
           <button>Submit</button>
         </form>
       </div>
